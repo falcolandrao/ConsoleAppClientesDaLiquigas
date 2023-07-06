@@ -7,7 +7,7 @@ namespace ConsoleAppClientesDaLiquigas.Model
 {
     public class Clientes
     {
-        private static int diferencaEmDias;
+        //private static int diferencaEmDias;
 
         public int Id { get; set; }
         public string NomeCompleto { get; set; }
@@ -17,6 +17,8 @@ namespace ConsoleAppClientesDaLiquigas.Model
         public int Idade { get; set; }
         public DateTime DataCadastro { get; set; }
         public DateTime? DataCancelamentoCadastro { get; set; }
+        public bool EstaAtivo { get; set; }
+
         public List<TabelaDePrecos> TabelaDePrecos { get; set; }
 
         public static List<Clientes> ObterTodosOsClientes()
@@ -28,12 +30,13 @@ namespace ConsoleAppClientesDaLiquigas.Model
             {
                 Id = 1,
                 NomeCompleto = "Leandro de Azevedo",
-                Cpf = "29796050854",
+                Cpf = "29090050050",
                 Endereco = "Rua Teste da Silva, 123",
-                Bairro = "São Mateus",
-                Idade = 39,
+                Bairro = "São Teste da Silva",
+                Idade = 40,
                 DataCadastro = new DateTime(2022, 01, 01),
-                DataCancelamentoCadastro = new DateTime(2022, 12, 31),
+                DataCancelamentoCadastro = new DateTime(2023, 01, 01),
+                EstaAtivo = false,
                 TabelaDePrecos = new List<TabelaDePrecos>()
                 {
                     new TabelaDePrecos { Id = 1, PesoDoBotijao = "P13", PrecoDoBotijao = 99.99, QtdDeBotijao = 2},
@@ -50,7 +53,8 @@ namespace ConsoleAppClientesDaLiquigas.Model
                 Bairro = "Tatuapé",
                 Idade = 25,
                 DataCadastro = new DateTime(2015, 01, 01),
-                DataCancelamentoCadastro = null,
+                DataCancelamentoCadastro = new DateTime(2015, 10, 01),
+                EstaAtivo = false,
                 TabelaDePrecos = new List<TabelaDePrecos>()
                 {
                     new TabelaDePrecos { Id = 1, PesoDoBotijao = "P13", PrecoDoBotijao = 99.99, QtdDeBotijao = 3},
@@ -99,24 +103,35 @@ namespace ConsoleAppClientesDaLiquigas.Model
             return contador;
         }
 
-        public static double ValidaDataCancelamentoEmDias(List<Clientes> auxClientesLiquigas)
+        public static int ValidaDataCancelamentoEmDias(List<Clientes> auxClientesLiquigas)
         {
+            int diferencaEmDias = 0;
+
             Console.WriteLine("Clientes Com Data de Cancelamento de Cadastro >>> \n");
-            
-            foreach (var item in auxClientesLiquigas)
+
+            var validaEstaAtivoOuNao = auxClientesLiquigas.Exists(val => val.DataCancelamentoCadastro == null && val.EstaAtivo == true);
+
+            if (validaEstaAtivoOuNao)
             {
-                if (item.DataCadastro != null && item.DataCancelamentoCadastro != null)
-                {
-                    System.TimeSpan difDatas = ((TimeSpan)(item.DataCancelamentoCadastro - item.DataCadastro));
-
-                    double auxDifEmDias = difDatas.TotalDays;
-
-                    Console.WriteLine(string.Format("{0} {1} {2} {3} {4} {5} {6} {7} {8}", item.Id, item.NomeCompleto, item.Cpf, item.Endereco,
-                    item.Bairro, item.Idade + " anos ", item.DataCadastro, item.DataCancelamentoCadastro, auxDifEmDias + " dias cancelado "));
-                }
- 
+                Console.WriteLine("Não existem clientes cancelados na base");
             }
-            
+            else
+            {
+                foreach (var item in auxClientesLiquigas)
+                {
+                    if (item.DataCadastro != null && item.DataCancelamentoCadastro != null)
+                    {
+                        System.TimeSpan difDatas = ((TimeSpan)(item.DataCancelamentoCadastro - item.DataCadastro));
+
+                        double auxDifEmDias = difDatas.TotalDays;
+
+                        Console.WriteLine(string.Format("{0} {1} {2} {3} {4} {5} {6} {7} {8}", item.Id, item.NomeCompleto, item.Cpf, item.Endereco,
+                        item.Bairro, item.Idade + " anos ", item.DataCadastro, item.DataCancelamentoCadastro, auxDifEmDias + " dias cancelado "));
+                    }
+
+                }
+                
+            }
             return diferencaEmDias;
         }
     }
