@@ -6,10 +6,10 @@ namespace ConsoleAppStudent
 {
     public static class ExportData
     {
-        public static void ExportCsv<T>(IEnumerable<T> genericList, string fileName)
+        public static void ExportarCsv<T>(IEnumerable<T> genericList, string fileName)
         {
             var sb = new StringBuilder();
-            var basePath = @"C:\Estudos\Back";
+            var basePath = @"C:\Estudos\Relatorio";
             var finalPath = Path.Combine(basePath, fileName + ".csv");
             var header = "";
             var info = typeof(T).GetProperties();

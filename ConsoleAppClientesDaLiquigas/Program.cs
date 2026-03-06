@@ -1,7 +1,6 @@
-﻿using ConsoleAppClientesDaLiquigas.Model;
-using ConsoleAppStudent;
+﻿using ConsoleAppClientesDaLiquigas.Data;
+using ConsoleAppClientesDaLiquigas.Services;
 using System;
-using System.Collections.Generic;
 
 namespace ConsoleAppClientesDaLiquigas
 {
@@ -9,39 +8,42 @@ namespace ConsoleAppClientesDaLiquigas
     {
         static void Main(string[] args)
         {
-            var auxClientesLiquigas = Clientes.ObterTodosOsClientes();
 
-            var auxDataHora = Clientes.DataHoraCorrente();
+            var clientesRepository = new ClientesRepository();
+            
+            var clientesService = new ClientesService(clientesRepository);
 
-            int escolherNumero;
+            var dataExecucao = ClientesService.ObterDataAtual();
+
+            int opcaoSelecionada;
 
             Console.WriteLine("Digite 1 - Para Listar e exportar os clientes \n");
             Console.WriteLine("Digite 2 - Para Validar total de dias que determinado cliente cancelou o cadastro \n");
 
-            escolherNumero = Convert.ToInt32(Console.ReadLine());
+            opcaoSelecionada = Convert.ToInt32(Console.ReadLine());
 
             try
             {
-                switch (escolherNumero)
+                switch (opcaoSelecionada)
                 {
                     case 1:
 
                         Console.WriteLine("Lista dos Clientes da Liquigas >>> \n");
 
-                        Console.WriteLine(auxDataHora);
+                        Console.WriteLine(dataExecucao);
 
-                        Clientes.EscreverDadosNaConsole(auxClientesLiquigas);
+                        clientesService.ListarClientes();
 
                         Console.WriteLine("\n");
 
-                        Console.WriteLine("Total de Clientes {0} \n ", Clientes.TotalDeClientes(auxClientesLiquigas));
+                        Console.WriteLine("Total de Clientes {0} \n ", clientesService.ObterTotalClientes());
 
                         Console.WriteLine("\n");
                         break;
 
                     case 2:
 
-                        Clientes.ValidaDataCancelamentoEmDias(auxClientesLiquigas);
+                        clientesService.CalcularDiasCancelamento();
                         break;
 
                     default:
@@ -51,10 +53,8 @@ namespace ConsoleAppClientesDaLiquigas
             }
             catch (Exception ex)
             {
-
-                throw ex;
+                Console.WriteLine($"Erro: {ex.Message}");
             }
-
             Console.ReadKey();
         }
     }
