@@ -51,43 +51,36 @@ namespace ConsoleAppClientesDaLiquigas.Services
         {
             var clientes = _clientesRepository.ObterClientes();
 
-            int contador = clientes.Count();
-
-            return contador;
+            return clientes.Count();
         }
 
-        public int CalcularDiasCancelamento()
+        public int ExibirDiasCancelamento()
         {
-            int diferencaEmDias = 0;
-
             var clientes = _clientesRepository.ObterClientes();
 
             Console.WriteLine("Clientes Com Data de Cancelamento de Cadastro >>> \n");
 
-            var validaEstaAtivoOuNao = clientes.Exists(val => val.DataCancelamentoCadastro == null && val.EstaAtivo == true);
+            var clientesCancelados = clientes
+                .Where(c => c.DataCancelamentoCadastro != null)
+                .ToList();
 
-            if (validaEstaAtivoOuNao)
+            if (!clientesCancelados.Any())
             {
                 Console.WriteLine("Não existem clientes cancelados na base");
+                return 0;
             }
-            else
+            
+            foreach (var cliente in clientesCancelados)
             {
-                foreach (var item in clientes)
-                {
-                    if (item.DataCadastro != null && item.DataCancelamentoCadastro != null)
-                    {
-                        System.TimeSpan difDatas = ((TimeSpan)(item.DataCancelamentoCadastro - item.DataCadastro));
+                var diasCancelado = (cliente.DataCancelamentoCadastro.Value - cliente.DataCadastro).TotalDays;
 
-                        double auxDifEmDias = difDatas.TotalDays;
-
-                        Console.WriteLine(string.Format("{0} {1} {2} {3} {4} {5} {6} {7} {8}", item.Id, item.NomeCompleto, item.Cpf, item.Endereco,
-                        item.Bairro, item.Idade + " anos ", item.DataCadastro, item.DataCancelamentoCadastro, auxDifEmDias + " dias cancelado "));
-                    }
-
-                }
-
+                Console.WriteLine(
+                   $"{cliente.Id} {cliente.NomeCompleto} {cliente.Cpf} {cliente.Endereco} {cliente.Bairro} " +
+                   $"{cliente.Idade} anos {cliente.DataCadastro} {cliente.DataCancelamentoCadastro} {diasCancelado} dias cancelado"
+                );
             }
-            return diferencaEmDias;
+
+            return clientesCancelados.Count;
         }
     }
 }

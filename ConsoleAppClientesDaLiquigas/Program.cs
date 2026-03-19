@@ -43,7 +43,7 @@ namespace ConsoleAppClientesDaLiquigas
 
                     case 2:
 
-                        clientesService.CalcularDiasCancelamento();
+                        clientesService.ExibirDiasCancelamento();
                         break;
 
                     default:
